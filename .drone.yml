@@ -1,0 +1,43 @@
+kind: pipeline
+name: GUISSH
+steps:
+- name: Deploy Mac App
+  image: appleboy/drone-ssh
+  environment:
+    MAC_USER_PASS:
+      from_secret: password
+  settings:
+    host:
+      from_secret: host
+    username:
+      from_secret: username
+    ssh_key:
+      from_secret: ssh_key
+    port: 22
+    envs: [MAC_USER_PASS]
+    script:
+      - ls
+---
+kind: secret
+name: username
+get:
+  path: blockdrei/mac-build
+  name: username
+---
+kind: secret
+name: password
+get:
+  path: blockdrei/mac-build
+  name: password
+---
+kind: secret
+name: ssh_key
+get:
+  path: blockdrei/mac-build
+  name: privateKey
+---
+kind: secret
+name: host
+get:
+  path: blockdrei/mac-build
+  name: host
