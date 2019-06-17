@@ -1,5 +1,4 @@
-[logo]: https://travis-ci.com/blockdrei/guissh.svg?branch=beta "Build Status"
-
+[![Build Status](https://travis-ci.com/blockdrei/guissh.svg?branch=master)](https://travis-ci.com/blockdrei/guissh)
 
 # GUISSH
 
