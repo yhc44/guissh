@@ -1,6 +1,7 @@
 'use strict'
 
 import { app, BrowserWindow } from 'electron'
+import { initApp } from './controller/init'
 
 /**
  * Set `__static` path to static files in production
@@ -22,7 +23,7 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     height: 768,
     useContentSize: true,
-    width: 1024,
+    width: 1024
   })
 
   mainWindow.loadURL(winURL)
@@ -32,7 +33,10 @@ function createWindow () {
   })
 }
 
-app.on('ready', createWindow)
+app.on('ready', () => {
+  initApp()
+  createWindow()
+})
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
