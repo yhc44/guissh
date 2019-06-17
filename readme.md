@@ -1,4 +1,4 @@
-[![Build Status](https://drone.blockdrei.de/api/badges/blockdrei/guissh/status.svg?ref=/refs/heads/beta)](https://drone.blockdrei.de/blockdrei/guissh)
+[![Build Status](https://drone.blockdrei.de/api/badges/blockdrei/guissh/status.svg?ref=refs/heads/beta)](https://drone.blockdrei.de/blockdrei/guissh)
 
 # GUISSH
 
