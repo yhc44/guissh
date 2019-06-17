@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/blockdrei/guissh.svg?branch=master)](https://travis-ci.com/blockdrei/guissh)
+[![Build Status](https://drone.blockdrei.de/api/badges/blockdrei/guissh/status.svg?ref=/refs/heads/beta)](https://drone.blockdrei.de/blockdrei/guissh)
 
 # GUISSH
 
