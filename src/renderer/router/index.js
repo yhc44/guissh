@@ -11,8 +11,16 @@ export default new Router({
       component: require('@/components/LandingPage').default
     },
     {
-      path: '*',
-      redirect: '/'
+      path: '/config',
+      component: require('@/components/SSHConfig').default,
+      name: 'ssh-config'
+    },
+    {
+      path: '/settings',
+      component: require('@/components/Settings').default
+    },
+    {
+      path: '/heavyload'
     }
   ]
 })

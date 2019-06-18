@@ -1,8 +1,9 @@
 const fs = require('fs')
 const path = require('path')
+const os = require('os')
 export default class SSHManager {
   constructor (options = {
-    sshBasePath: '~/.ssh',
+    sshBasePath: path.join(os.homedir(), '.ssh'),
     sshConfigFileName: 'config',
     sshAuthFileName: 'authorized_keys'
   }) {
@@ -78,29 +79,26 @@ export default class SSHManager {
         configObject[tmpHost] = {}
       }
     }
+    let configArray = []
     for (const configKey of Object.keys(configObject)) {
-      configObject[configKey].delete = () => {
-      }
-      configObject[configKey].edit = (editOptions = {
-        host: configObject[configKey].host,
+      const parsedPort = parseInt(configObject[configKey].port)
+      configArray.push({
+        host: configKey,
         hostname: configObject[configKey].hostname,
         identityFile: configObject[configKey].identityfile,
-        port: configObject[configKey].port,
+        port: Number.isNaN(parsedPort) ? undefined : parsedPort,
         user: configObject[configKey].user
-      }) => {
-        return this.editSSHConfigEntry(configObject[configKey].host, editOptions)
-      }
+      })
     }
-    return configObject
+    return configArray
   }
   editSSHConfigEntry (host, editOptions = {}) {
     return new Promise((resolve, reject) => {
-
+      console.log(editOptions)
     })
   }
   addSSHConfigEntry (host, port, hostname, identityFile) {
     return new Promise((resolve, reject) => {
-
     })
   }
 }

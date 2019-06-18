@@ -1,15 +1,9 @@
 import SSHManager from '../classes/sshManager'
+export let sshManager = null
+
 export const initApp = async () => {
-  const sshManager = new SSHManager({
-    sshBasePath: '/Users/heeser/.ssh',
-    sshAuthFileName: 'authorized_keys',
-    sshConfigFileName: 'config'
-  })
+  sshManager = new SSHManager()
   await sshManager.init().then(_ => {
     console.log('SSHManager init successful')
   })
-  const configData = sshManager.getSSHConfigData()
-  for (const configKey of Object.keys(configData)) {
-    configData[configKey].edit()
-  }
 }

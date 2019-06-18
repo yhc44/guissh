@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import { initApp } from './controller/init'
 
 /**
@@ -12,9 +12,13 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 let mainWindow
+export let heavyLoadWindow
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
+const heavyLoadWindowURL = process.env.NODE_ENV === 'development'
+  ? `http://localhost:9080/#/heavyload`
+  : `file://${__dirname}/index.html#login`
 
 function createWindow () {
   /**
@@ -25,17 +29,41 @@ function createWindow () {
     useContentSize: true,
     width: 1024
   })
-
+  heavyLoadWindow = new BrowserWindow({
+    show: false
+  })
+  heavyLoadWindow.loadURL(heavyLoadWindowURL)
   mainWindow.loadURL(winURL)
 
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+  heavyLoadWindow.on('closed', () => {
+    heavyLoadWindow = null
+  })
 }
-
-app.on('ready', () => {
-  initApp()
+ipcMain.on('main_window_rendered', () => {
+  mainWindow.send('ipc_ready')
+})
+ipcMain.on('heavyload_window_rendered', () => {
+  heavyLoadWindow.send('ipc_ready')
+})
+app.on('before-quit', () => {
+  if (mainWindow) {
+    mainWindow.destroy()
+  }
+  if (heavyLoadWindow) {
+    heavyLoadWindow.destroy()
+  }
+})
+app.on('quit', () => {
+  app.quit()
+})
+app.on('ready', async () => {
+  await initApp()
   createWindow()
+  require('./controller/ipc/sshManager')
+  require('./controller/ipc/ssh')
 })
 
 app.on('window-all-closed', () => {
