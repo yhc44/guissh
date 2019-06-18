@@ -14,6 +14,7 @@ Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false
 Vue.use(VueWait)
 Vue.use(Element)
+export const E = new Vue()
 /* eslint-disable no-new */
 new Vue({
   components: { App },
