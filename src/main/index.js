@@ -27,7 +27,9 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     height: 768,
     useContentSize: true,
-    width: 1024
+    width: 1024,
+    minWidth: 1024,
+    minHeight: 768
   })
   heavyLoadWindow = new BrowserWindow({
     show: false

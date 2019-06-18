@@ -48,7 +48,7 @@
     methods: {
       ...mapActions('sshManager', ['initConfigData'])
     },
-    name: 'guissh',
+    name: 'GUISSH',
     created () {
       const routePath = this.$route.fullPath
       if (routePath === '/') {

@@ -22,3 +22,14 @@ ipcMain.on('add_ssh_config_entry', async (event, entry) => {
     event.sender.webContents.send('ipc_error')
   }
 })
+ipcMain.on('edit_ssh_config_entry', async (event, args) => {
+  console.log(args)
+  try {
+    const configEntry = await sshManager.editSSHConfigEntry(args.host, args, args.numInFile)
+    event.sender.webContents.send('edit_ssh_config_entry', configEntry)
+  } catch (e) {
+    event.sender.webContents.send('ipc_error')
+  }
+})
+ipcMain.on('delete_ssh_config_entry', async (event, args) => {
+})

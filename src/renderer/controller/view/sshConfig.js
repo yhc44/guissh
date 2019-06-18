@@ -8,7 +8,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('sshManager', ['refreshConfigData', 'createSSHKeyPair', 'addSSHConfigEntry']),
+    ...mapActions('sshManager', ['refreshConfigData', 'createSSHKeyPair', 'addSSHConfigEntry', 'editSSHConfigEntry']),
     async createSSHKeyPairView (bitLength, outputFileName) {
       this.$wait.start('creating_keypair')
       console.log(`Create KeyPair with ${bitLength} bits`)
@@ -51,6 +51,26 @@ export default {
         messageController.error('An error occurred while creating config entry.')
       })
       this.$wait.end('adding_config_entry')
+    },
+    async editConfigEntryView () {
+      const identityFileName = this.configEntryIdentityFileName !== '' ? this.configEntryIdentityFileName : path.basename(this.configEntryIdentityFilePath)
+      this.$wait.start('editing_config_entry')
+      await this.editSSHConfigEntry({
+        host: this.configEntryHost,
+        hostname: this.configEntryHostname,
+        port: parseInt(this.configEntryPort),
+        identityFileName: identityFileName,
+        user: this.configEntryUser,
+        numInFile: this.configEntryNumInFile
+      }).then(() => {
+        messageController.success('Successfully edited config entry.')
+        this.showAddConfigEntryDialog = false
+        this.configEntryDialogEdit = false
+      }).catch(err => {
+        console.log(err)
+        messageController.error('An error occurred while editing config entry.')
+      })
+      this.$wait.end('editing_config_entry')
     },
     selectConfigEntryIdentityFilePath () {
     }

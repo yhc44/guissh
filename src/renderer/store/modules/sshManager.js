@@ -14,6 +14,13 @@ export const sshManagerStore = {
     },
     addSSHConfigEntry: (state, configEntry) => {
       state.configData.unshift(configEntry)
+    },
+    editSSHConfigEntry: (state, configEntry) => {
+      state.configData.find((configDataEntry, index) => {
+        if (configDataEntry.numInFile === configEntry.numInFile) {
+          state.configData[index] = configEntry
+        }
+      })
     }
   },
   actions: {
@@ -40,6 +47,12 @@ export const sshManagerStore = {
     addSSHConfigEntry: ({commit}, configEntryData) => {
       return makeIPCCall('add_ssh_config_entry', configEntryData).then(configEntry => {
         commit('addSSHConfigEntry', configEntry)
+      })
+    },
+    editSSHConfigEntry: ({commit}, configEntry) => {
+      console.log(configEntry)
+      return makeIPCCall('edit_ssh_config_entry', configEntry).then(configEntry => {
+        commit('editSSHConfigEntry', configEntry)
       })
     }
   }

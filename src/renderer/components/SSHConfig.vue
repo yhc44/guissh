@@ -1,6 +1,6 @@
 <template>
   <v-layout ma-3>
-    <el-dialog title="Add Config Entry"
+    <el-dialog :title="configEntryDialogTitle"
     :visible="showAddConfigEntryDialog"
     width="75%">
     <el-form>
@@ -66,7 +66,8 @@
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="closeAddConfigEntryDialog">Cancel</el-button>
-      <el-button type="primary" :loading="$wait.is('adding_config_entry')" @click="addConfigEntryView">Add</el-button>
+      <el-button v-if="!configEntryDialogEdit" type="primary" :loading="$wait.is('adding_config_entry')" @click="addConfigEntryView">Add</el-button>
+      <el-button type="primary" @click="editConfigEntryView" v-else>Save</el-button>
     </span>
     </el-dialog>
     <v-layout column>
@@ -78,19 +79,22 @@
           Refresh
         </el-button>
       </v-flex>
-      <v-flex xs10>
-        <v-list>
+      <v-flex xs10 mt-2>
+        <v-list class="sshConfigEntryList">
           <v-list-tile v-for="(configItem, index) in configData" :key="index">
             <v-list-tile-content>
               <span class="body-2">
-                {{configItem.host}}
+                {{configItem.host}} <span v-if="configItem.user">({{configItem.user}})</span>
               </span>
               <span>
                 {{configItem.identityFile}}
               </span>
             </v-list-tile-content>
             <v-list-tile-action>
-              <el-button icon="el-icon-remove" type="danger" size="mini"/>
+              <v-layout row>
+                <v-flex mr-1><el-button @click="openAddConfigEntryDialog(true, configItem)" icon="el-icon-edit" size="mini" /></v-flex>
+                <v-flex><el-button icon="el-icon-remove" type="danger" size="mini"/></v-flex>
+              </v-layout>
             </v-list-tile-action>
           </v-list-tile>
         </v-list>
@@ -107,10 +111,12 @@ export default {
   data () {
     return {
       showAddConfigEntryDialog: false,
+      configEntryDialogEdit: false,
       configEntryHost: '',
       configEntryHostname: '',
       configEntryPort: '',
       configEntryUser: '',
+      configEntryNumInFile: -1,
       configEntryIdentityFilePath: '',
       configEntryIdentityFileBitLength: 1024,
       configEntryIdentityFileName: '',
@@ -119,19 +125,39 @@ export default {
     }
   },
   computed: {
-    ...mapState('sshManager', ['configData'])
+    ...mapState('sshManager', ['configData']),
+    configEntryDialogTitle () {
+      return !this.configEntryDialogEdit ? 'Add config entry' : 'Edit config entry'
+    }
   },
   methods: {
-    openAddConfigEntryDialog () {
+    openAddConfigEntryDialog (edit = false, configEntry) {
       this.showAddConfigEntryDialog = true
+      this.configEntryDialogEdit = edit
+      if (edit) {
+        this.configEntryHost = configEntry.host
+        this.configEntryUser = configEntry.user ? configEntry.user : ''
+        this.configEntryPort = configEntry.port ? configEntry.port : ''
+        this.configEntryHostname = configEntry.hostname ? configEntry.hostname : ''
+        this.configEntryIdentityFilePath = configEntry.identityFile ? configEntry.identityFile : ''
+        this.configEntryNumInFile = configEntry.numInFile
+        // this.configEntryPort
+      }
     },
     closeAddConfigEntryDialog () {
       this.showAddConfigEntryDialog = false
+      // dialog close blur
+      setTimeout(() => {
+        this.configEntryDialogEdit = false
+      }, 1000)
     }
   }
 }
 </script>
 
-<style>
-
+<style scoped>
+  .sshConfigEntryList {
+    max-height: 650px;
+    overflow-y: auto;
+  }
 </style>

@@ -24,8 +24,10 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "change-case": "^3.1.0",
     "element-ui": "^2.9.1",
     "keypair": "^1.0.1",
+    "moment": "^2.24.0",
     "node-forge": "^0.8.4",
     "node-rsa": "^1.0.5",
     "vue": "^2.5.16",
