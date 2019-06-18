@@ -257,15 +257,19 @@ export default class SSHManager {
       if (user) {
         entry += ` User ${user}`
       }
-      fs.appendFile(sshConfigFilePath, entry, err => {
-        if (err) return reject(err)
-        resolve({
-          host: host,
-          hostname: hostname,
-          identityFile: path.join(this.options.sshBasePath, identityFileName),
-          port: port,
-          user: user
+      this.backupConfigData().then(() => {
+        fs.appendFile(sshConfigFilePath, entry, err => {
+          if (err) return reject(err)
+          resolve({
+            host: host,
+            hostname: hostname,
+            identityFile: path.join(this.options.sshBasePath, identityFileName),
+            port: port,
+            user: user
+          })
         })
+      }).catch(err => {
+        reject(err)
       })
     })
   }
