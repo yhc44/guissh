@@ -8,7 +8,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('sshManager', ['refreshConfigData', 'createSSHKeyPair', 'addSSHConfigEntry', 'editSSHConfigEntry']),
+    ...mapActions('sshManager', ['refreshConfigData', 'createSSHKeyPair', 'addSSHConfigEntry', 'editSSHConfigEntry', 'deleteSSHConfigEntry']),
     async createSSHKeyPairView (bitLength, outputFileName) {
       this.$wait.start('creating_keypair')
       console.log(`Create KeyPair with ${bitLength} bits`)
@@ -29,6 +29,7 @@ export default {
         title: 'Select identity file',
         buttonLabel: 'Select',
         properties: ['openFile', 'showHiddenFiles', 'openDirectory'],
+        // todo
         defaultPath: '/Users/yannheeser/.ssh'
       }, (filePaths) => {
         this.configEntryIdentityFilePath = filePaths[0]
@@ -71,6 +72,16 @@ export default {
         messageController.error('An error occurred while editing config entry.')
       })
       this.$wait.end('editing_config_entry')
+    },
+    async deleteConfigEntryView (configEntry) {
+      this.$wait.start('deleting_config_entry')
+      await this.deleteSSHConfigEntry(configEntry).then(() => {
+        messageController.success('Successfully deleted config entry.')
+      }).catch(err => {
+        console.log(err)
+        messageController.error('An error occurred while deleting config entry.')
+      })
+      this.$wait.start('deleting_config_entry')
     },
     selectConfigEntryIdentityFilePath () {
     }

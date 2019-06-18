@@ -72,7 +72,7 @@
     </el-dialog>
     <v-layout column>
       <v-flex xs2>
-        <el-button @click="openAddConfigEntryDialog" size="medium">
+        <el-button @click="openAddConfigEntryDialog(false)" size="medium">
           Add
         </el-button>
         <el-button @click="refreshConfigData" size="medium">
@@ -93,7 +93,7 @@
             <v-list-tile-action>
               <v-layout row>
                 <v-flex mr-1><el-button @click="openAddConfigEntryDialog(true, configItem)" icon="el-icon-edit" size="mini" /></v-flex>
-                <v-flex><el-button icon="el-icon-remove" type="danger" size="mini"/></v-flex>
+                <v-flex><el-button @click="deleteConfigEntryView(configItem)" icon="el-icon-remove" type="danger" size="mini"/></v-flex>
               </v-layout>
             </v-list-tile-action>
           </v-list-tile>
@@ -133,8 +133,8 @@ export default {
   methods: {
     openAddConfigEntryDialog (edit = false, configEntry) {
       this.showAddConfigEntryDialog = true
-      this.configEntryDialogEdit = edit
-      if (edit) {
+      if (edit === true) {
+        this.configEntryDialogEdit = true
         this.configEntryHost = configEntry.host
         this.configEntryUser = configEntry.user ? configEntry.user : ''
         this.configEntryPort = configEntry.port ? configEntry.port : ''
@@ -147,9 +147,7 @@ export default {
     closeAddConfigEntryDialog () {
       this.showAddConfigEntryDialog = false
       // dialog close blur
-      setTimeout(() => {
-        this.configEntryDialogEdit = false
-      }, 1000)
+      this.configEntryDialogEdit = false
     }
   }
 }

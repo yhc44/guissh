@@ -225,8 +225,45 @@ export default class SSHManager {
       }
     })
   }
-  deleteSSHConfigEntry (host) {
+  deleteSSHConfigEntry (host, numInFile = -1) {
     return new Promise((resolve, reject) => {
+      let data = this.sshConfigFileData.split('\n')
+      let resultData = []
+      let deleteOn = false
+      let hostNum = 0
+      let index = 0
+      for (let line of data) {
+        if (line.includes('host') && !line.includes('hostname')) {
+          if (line.trim().split(' ')[1] === host && (numInFile >= 0 && numInFile === hostNum)) {
+            deleteOn = !deleteOn
+            console.log(`Found host ${host}`)
+          } else {
+            resultData.push(line)
+          }
+          hostNum++
+        } else {
+          if (!deleteOn) {
+            resultData.push(line)
+          }
+        }
+        let nextLine = ''
+        if (index < (data.length - 2)) {
+          nextLine = data[index + 1]
+        }
+        if (nextLine.includes('host') && !nextLine.includes('hostname')) {
+          deleteOn = false
+        }
+        index++
+      }
+      const sshConfigFilePath = path.join(this.options.sshBasePath, this.options.sshConfigFileName)
+      const configData = resultData.join('\n')
+      this.backupConfigData().then(_ => {
+        fs.writeFile(sshConfigFilePath, configData, err => {
+          if (err) return reject(err)
+          this.sshConfigFileData = configData
+          resolve(true)
+        })
+      }).catch(err => reject(err))
     })
   }
   backupConfigData () {
