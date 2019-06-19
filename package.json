@@ -1,13 +1,14 @@
 {
   "name": "guissh",
   "productName": "guissh",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "author": "Yann Heeser",
   "description": "A simple multi platform GUI for managing SSH Keys. Written in Javascript with electron.",
   "license": "MIT",
   "main": "./dist/electron/main.js",
   "scripts": {
-    "build": "node .electron-vue/build.js",
+    "build": "node .electron-vue/build.js && electron-builder",
+    "build-upload": "node .electron-vue/build.js && electron-builder --publish=always",
     "build:darwin": "cross-env BUILD_TARGET=darwin node .electron-vue/build.js",
     "build:linux": "cross-env BUILD_TARGET=linux node .electron-vue/build.js",
     "build:mas": "cross-env BUILD_TARGET=mas node .electron-vue/build.js",
@@ -21,6 +22,68 @@
     "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.main.config.js",
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
     "postinstall": "npm run lint:fix"
+  },
+  "build": {
+    "productName": "GUISSH",
+    "copyright": "Copyright (c) 2019 Yann Heeser",
+    "appId": "guissh.blockdrei.de",
+    "artifactName": "guissh-${version}-beta-${os}.${ext}",
+    "directories": {
+      "output": "build"
+    },
+    "files": [
+      "dist/electron/**/*"
+    ],
+    "dmg": {
+      "contents": [
+        {
+          "x": 410,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 130,
+          "y": 150,
+          "type": "file"
+        }
+      ]
+    },
+    "mac": {
+      "icon": "build/icons/icon.icns",
+      "target": [
+        "zip",
+        "dmg"
+      ],
+      "publish": {
+        "provider": "s3",
+        "bucket": "blockdrei",
+        "path": "guissh/mac"
+      }
+    },
+    "win": {
+      "icon": "build/icons/icon.ico",
+      "target": [
+        "nsis",
+        "zip"
+      ],
+      "publish": {
+        "provider": "s3",
+        "bucket": "blockdrei",
+        "path": "guissh/windows"
+      }
+    },
+    "linux": {
+      "icon": "build/icons",
+      "target": "tar.gz",
+      "publish": {
+        "provider": "s3",
+        "bucket": "blockdrei",
+        "path": "guissh/linux"
+      },
+      "category": "Utility"
+    },
+    "publish": "always"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -59,6 +122,8 @@
     "electron-devtools-installer": "^2.2.4",
     "electron-packager": "^12.1.0",
     "electron-rebuild": "^1.8.1",
+    "electron-builder": "^19.56.2",
+    "electron-publisher-s3": "^20.17.2",
     "babel-eslint": "^8.2.3",
     "eslint": "^4.19.1",
     "eslint-friendly-formatter": "^4.0.1",

@@ -16,7 +16,20 @@ steps:
     port: 22
     envs: [MAC_USER_PASS]
     script:
-      - ls
+      - cd ~/Documents/dev/blockdrei/guissh
+      # current version
+      - VERSION=$(head package.json | grep version | awk '{print $2}' | cut -d\" -f2)
+      # pull new
+      # todo other branches than beta (git pull here pulls origin/beta automatically)
+      - git stash
+      - git pull
+      - VERSION_NEW=$(head package.json | grep version | awk '{print $2}' | cut -d\" -f2)
+      # set path so we can use commands
+      - PATH=/usr/local/bin:/bin:/usr/bin
+      # unlock keychain for codesigning
+      - security unlock-keychain -p $MAC_USER_PASS login.keychain
+      - npm install
+      - if [ $VERSION != $VERSION_NEW ]; then npm run build-upload else echo "Version still the same. Do not build."; fi
 ---
 kind: secret
 name: username
