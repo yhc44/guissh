@@ -1,7 +1,7 @@
 {
   "name": "guissh",
   "productName": "guissh",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": "Yann Heeser",
   "description": "A simple multi platform GUI for managing SSH Keys. Written in Javascript with electron.",
   "license": "MIT",
