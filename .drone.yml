@@ -35,23 +35,23 @@ steps:
 kind: secret
 name: username
 get:
-  path: blockdrei/mac-build
+  path: blockdrei/mac-build-01
   name: username
 ---
 kind: secret
 name: password
 get:
-  path: blockdrei/mac-build
+  path: blockdrei/mac-build-01
   name: password
 ---
 kind: secret
 name: ssh_key
 get:
-  path: blockdrei/mac-build
+  path: blockdrei/mac-build-01
   name: privateKey
 ---
 kind: secret
 name: host
 get:
-  path: blockdrei/mac-build
+  path: blockdrei/mac-build-01
   name: host
