@@ -1,7 +1,6 @@
 const fs = require('fs')
 const path = require('path')
 const os = require('os')
-const changeCase = require('change-case')
 const moment = require('moment')
 export default class SSHManager {
   constructor (options = {
@@ -148,81 +147,20 @@ export default class SSHManager {
   }
   // numInFile for duplicates
   editSSHConfigEntry (host, editOptions = {}, numInFile = -1) {
-    console.log(editOptions)
+    const data = this.getSSHConfigData()
     return new Promise(async (resolve, reject) => {
-      let data = this.sshConfigFileData.split('\n')
-      let hasChange = false
-      let resultData = []
-      let editOn = false
-      let hostNum = 0
-      let index = 0
-      const isNumVal = {
-        'port': true
-      }
-      for (let line of data) {
-        if (editOn) {
-          const splitLine = line.trim().split(' ')
-          const key = changeCase.camelCase(splitLine[0])
-          let value = splitLine[1]
-          if (key && value) {
-            console.log(`key: ${key} value: ${value}`)
-            if (editOptions[key]) {
-              line = ` ${changeCase.pascalCase(key)} ${editOptions[key]}`
-              if (isNumVal[key]) {
-                value = parseInt(value)
-                editOptions[key] = parseInt(editOptions[key])
-              }
-              if (value !== editOptions[key]) {
-                console.log(`Changed ${value} for ${editOptions[key]} at key ${key}`)
-                hasChange = true
-              }
-            }
+      let resultConfigArray = []
+      for (let configEntry of data) {
+        if (configEntry.numInFile === numInFile && configEntry.host === host) {
+          const editOptionsKeys = Object.keys(editOptions)
+          for (const editOptionKey of editOptionsKeys) {
+            configEntry[editOptionKey] = editOptions[editOptionKey]
           }
         }
-        let nextLine = ''
-        if (index < (data.length - 2)) {
-          nextLine = data[index + 1]
-        }
-        if (nextLine.includes('host') && !nextLine.includes('hostname')) {
-          editOn = false
-        }
-        if (line.includes('host') && !line.includes('hostname')) {
-          if (line.trim().split(' ')[1] === host && (numInFile >= 0 && numInFile === hostNum)) {
-            editOn = !editOn
-            console.log(`Found host ${host}`)
-          }
-          hostNum++
-        }
-        resultData.push(line)
-        index++
+        resultConfigArray.push(configEntry)
       }
-      const sshConfigFilePath = path.join(this.options.sshBasePath, this.options.sshConfigFileName)
-      const configData = resultData.join('\n')
-
-      try {
-        const resultConfigData = {
-          host: host,
-          hostname: editOptions.hostname,
-          port: editOptions.port,
-          user: editOptions.user,
-          numInFile: numInFile,
-          identityFile: path.join(this.options.sshBasePath, editOptions.identityFileName)
-        }
-        if (hasChange) {
-          console.log(`Edit has change.`)
-          await this.backupConfigData()
-          fs.writeFile(sshConfigFilePath, configData, err => {
-            if (err) return reject(err)
-            this.sshConfigFileData = configData
-            resolve(resultConfigData)
-          })
-        } else {
-          console.log(`Edit has no change.`)
-          resolve(resultConfigData)
-        }
-      } catch (e) {
-        reject(e)
-      }
+      console.log(resultConfigArray)
+      resolve(true)
     })
   }
   deleteSSHConfigEntry (host, numInFile = -1) {
