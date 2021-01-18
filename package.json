@@ -86,7 +86,7 @@
     "publish": "always"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "change-case": "^3.1.0",
     "element-ui": "^2.9.1",
     "keypair": "^1.0.1",
